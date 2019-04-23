@@ -1,8 +1,9 @@
 package cn.quickits.halia.sample
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import cn.quickits.halia.Halia
 import cn.quickits.halia.loading
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -20,12 +21,16 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    println(it)
-                    btn.text = it
+                    Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
                 }, {
                     it.printStackTrace()
                 })
         }
+
+        btn_second.setOnClickListener {
+            startActivity(Intent(this, SecondActivity::class.java))
+        }
+
     }
 
 }
