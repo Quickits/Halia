@@ -1,8 +1,9 @@
 package cn.quickits.halia.sample
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import cn.quickits.halia.LoadingDialog
+import androidx.appcompat.app.AppCompatActivity
+import cn.quickits.halia.Halia
+import cn.quickits.halia.loading
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         btn.setOnClickListener {
-            LoadingDialog(API.loadingByNetwork()).show()
+            API.loadingByNetwork().loading()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -25,7 +26,6 @@ class MainActivity : AppCompatActivity() {
                     it.printStackTrace()
                 })
         }
-
     }
 
 }

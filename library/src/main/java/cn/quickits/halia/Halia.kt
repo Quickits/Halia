@@ -21,6 +21,8 @@ object Halia {
 
     val arrayMap: ArrayMap<Int, WeakReference<Activity?>> = ArrayMap()
 
+    private lateinit var mDialogCreator: (activity: Activity) -> Dialog
+
     fun init(application: Application) {
         application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
 
@@ -62,8 +64,17 @@ object Halia {
         })
     }
 
+    fun customDialog(dialogCreator: ((activity: Activity) -> Dialog)) {
+        mDialogCreator = dialogCreator
+    }
+
     fun createDialog(): Dialog? {
         val current = currentActivity?.get() ?: return null
+
+        if (::mDialogCreator.isInitialized) {
+            return mDialogCreator(current)
+        }
+
         return MaterialDialog(current).title(text = "Loading")
     }
 
