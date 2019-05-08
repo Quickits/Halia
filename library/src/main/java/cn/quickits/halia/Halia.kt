@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.collection.ArrayMap
 import com.afollestad.materialdialogs.MaterialDialog
 import java.lang.ref.WeakReference
+import java.util.*
 
 
 /**
@@ -17,9 +18,7 @@ import java.lang.ref.WeakReference
  **/
 object Halia {
 
-    var currentActivity: WeakReference<Activity?>? = null
-
-    val arrayMap: ArrayMap<Int, WeakReference<Activity?>> = ArrayMap()
+    private val activityList = LinkedList<Activity>()
 
     private lateinit var mDialogCreator: (activity: Activity) -> Dialog
 
@@ -27,32 +26,22 @@ object Halia {
         application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
 
             override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-                activity ?: return
-
-                currentActivity?.clear()
-                currentActivity = WeakReference(activity)
-
-                arrayMap[activity.hashCode()] = currentActivity
-
-                println(activity)
-            }
-
-            override fun onActivityDestroyed(activity: Activity?) {
-                currentActivity?.clear()
-
-                activity ?: return
-
-                val wek = arrayMap.remove(activity.hashCode())
-                wek?.clear()
-            }
-
-            override fun onActivityResumed(activity: Activity?) {
-            }
-
-            override fun onActivityPaused(activity: Activity?) {
+                setTopActivity(activity)
             }
 
             override fun onActivityStarted(activity: Activity?) {
+                setTopActivity(activity)
+            }
+
+            override fun onActivityResumed(activity: Activity?) {
+                setTopActivity(activity)
+            }
+
+            override fun onActivityDestroyed(activity: Activity?) {
+                activityList.remove(activity)
+            }
+
+            override fun onActivityPaused(activity: Activity?) {
             }
 
             override fun onActivityStopped(activity: Activity?) {
@@ -69,13 +58,34 @@ object Halia {
     }
 
     fun createDialog(): Dialog? {
-        val current = currentActivity?.get() ?: return null
+        val current = getTopActivity() ?: return null
 
         if (::mDialogCreator.isInitialized) {
             return mDialogCreator(current)
         }
 
         return MaterialDialog(current).title(text = "Loading")
+    }
+
+    private fun setTopActivity(activity: Activity?) {
+        activity ?: return
+
+        if (activityList.contains(activity)) {
+            if (activityList.last != activity) {
+                activityList.remove(activity)
+                activityList.addLast(activity)
+            }
+        } else {
+            activityList.addLast(activity)
+        }
+    }
+
+    private fun getTopActivity(): Activity? {
+        return if (activityList.isNotEmpty()) {
+            activityList.last
+        } else {
+            null
+        }
     }
 
 }
