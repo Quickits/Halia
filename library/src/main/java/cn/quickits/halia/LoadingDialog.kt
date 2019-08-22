@@ -40,25 +40,10 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
 
                 }
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    isManualClose = true
-                    processor.onNext(it)
-                    processor.onComplete()
-                    try {
-                        dialog?.dismiss()
-                    } catch (e: IllegalArgumentException) {
-
-                    }
-                }, {
-                    isManualClose = true
-                    processor.onError(it)
-                    processor.onComplete()
-                    try {
-                        dialog?.dismiss()
-                    } catch (e: IllegalArgumentException) {
-
-                    }
-                })
+                .subscribe(
+                    { data -> dispatchDataOrError(data = data) },
+                    { error -> dispatchDataOrError(error = error) }
+                )
         }
 
         dialog?.setOnDismissListener {
@@ -78,6 +63,24 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
 
     fun dismiss() {
         dialog?.dismiss()
+    }
+
+    private fun dispatchDataOrError(data: T? = null, error: Throwable? = null) {
+        isManualClose = true
+
+        if (data != null) {
+            processor.onNext(data)
+        } else if (error != null) {
+            processor.onError(error)
+        }
+
+        processor.onComplete()
+
+        try {
+            dialog?.dismiss()
+        } catch (e: IllegalArgumentException) {
+
+        }
     }
 
 }
