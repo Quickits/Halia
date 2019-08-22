@@ -44,12 +44,20 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
                     isManualClose = true
                     processor.onNext(it)
                     processor.onComplete()
-                    dialog?.dismiss()
+                    try {
+                        dialog?.dismiss()
+                    } catch (e: IllegalArgumentException) {
+
+                    }
                 }, {
                     isManualClose = true
                     processor.onError(it)
                     processor.onComplete()
-                    dialog?.dismiss()
+                    try {
+                        dialog?.dismiss()
+                    } catch (e: IllegalArgumentException) {
+
+                    }
                 })
         }
 
