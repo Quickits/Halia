@@ -20,10 +20,11 @@ object Halia {
 
     private val activityList = LinkedList<Activity>()
 
-    private lateinit var mDialogCreator: (activity: Activity) -> Dialog
+    private var dialogCreator: (data: Any?, activity: Activity) -> Dialog? = ::defaultDialogCreator
 
-    fun init(application: Application) {
-        application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+    fun init(application: Application): Halia {
+        application.registerActivityLifecycleCallbacks(object :
+            Application.ActivityLifecycleCallbacks {
 
             override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
                 setTopActivity(activity)
@@ -51,21 +52,20 @@ object Halia {
             }
 
         })
+        return this
     }
 
-    fun customDialog(dialogCreator: ((activity: Activity) -> Dialog)) {
-        mDialogCreator = dialogCreator
+    fun customDialog(dialogCreator: (data: Any?, activity: Activity) -> Dialog?): Halia {
+        this.dialogCreator = dialogCreator
+        return this
     }
 
-    fun createDialog(): Dialog? {
-        val current = getTopActivity() ?: return null
-
-        if (::mDialogCreator.isInitialized) {
-            return mDialogCreator(current)
-        }
-
-        return MaterialDialog(current).title(text = "Loading")
+    internal fun createDialog(data: Any?): Dialog? {
+        val activity = getTopActivity() ?: return null
+        return dialogCreator(data, activity)
     }
+
+    private fun defaultDialogCreator(data: Any? = null, activity: Activity): Dialog? = MaterialDialog(activity).title(text = "Loading")
 
     private fun setTopActivity(activity: Activity?) {
         activity ?: return

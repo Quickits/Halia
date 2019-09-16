@@ -22,8 +22,8 @@ class SampleApplication : Application() {
             return
         }
         //if you need custom dialog ,just do it
-        Halia.customDialog {
-            return@customDialog AlertDialog.Builder(it)
+        Halia.customDialog { _, activity ->
+            AlertDialog.Builder(activity)
                 .setTitle("custom dialog")
                 .create()
         }

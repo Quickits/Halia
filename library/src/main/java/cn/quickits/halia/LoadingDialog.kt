@@ -20,11 +20,18 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
 
     private val processor: FlowableProcessor<T> = BehaviorProcessor.create<T>().toSerialized()
 
-    private var dialog: Dialog? = Halia.createDialog()
+    private var dialog: Dialog? = null
 
     private var isManualClose: Boolean = false
 
-    init {
+    fun show(data: Any? = null): FlowableProcessor<T> {
+        init(data)
+        dialog?.show()
+        return processor
+    }
+
+    private fun init(data: Any? = null) {
+        dialog = Halia.createDialog(data)
         dialog?.setOnShowListener {
             disposable = observable
                 .doOnError {
@@ -56,12 +63,7 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
         }
     }
 
-    fun show(): FlowableProcessor<T> {
-        dialog?.show()
-        return processor
-    }
-
-    fun dismiss() {
+    private fun dismiss() {
         dialog?.dismiss()
     }
 
@@ -77,7 +79,7 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
         processor.onComplete()
 
         try {
-            dialog?.dismiss()
+            dismiss()
         } catch (e: IllegalArgumentException) {
 
         }
