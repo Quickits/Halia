@@ -4,9 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.app.Dialog
 import android.os.Bundle
-import androidx.collection.ArrayMap
 import com.afollestad.materialdialogs.MaterialDialog
-import java.lang.ref.WeakReference
 import java.util.*
 
 

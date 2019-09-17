@@ -35,16 +35,16 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
         dialog?.setOnShowListener {
             disposable = observable
                 .doOnError {
-
+                    dismiss()
                 }
                 .doOnComplete {
-
+                    dismiss()
                 }
                 .doOnDispose {
-
+                    dismiss()
                 }
                 .doFinally {
-
+                    dismiss()
                 }
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -64,7 +64,12 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
     }
 
     private fun dismiss() {
-        dialog?.dismiss()
+        try {
+            dialog?.dismiss()
+            dialog = null
+        } catch (e: IllegalArgumentException) {
+
+        }
     }
 
     private fun dispatchDataOrError(data: T? = null, error: Throwable? = null) {
@@ -77,12 +82,6 @@ class LoadingDialog<T>(private val observable: Observable<T>) {
         }
 
         processor.onComplete()
-
-        try {
-            dismiss()
-        } catch (e: IllegalArgumentException) {
-
-        }
     }
 
 }
