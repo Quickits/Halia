@@ -9,10 +9,9 @@ import io.reactivex.schedulers.Schedulers
 
 
 /**
- * @program: Halia
- * @description:
- * @author: gavinliu
- * @create: 2019-04-22 15:55
+ * @author: Gavin Liu
+ *
+ * Created on 2019-04-22.
  **/
 class LoadingDialog<T>(private val observable: Observable<T>) {
 

@@ -9,10 +9,9 @@ import java.util.*
 
 
 /**
- * @program: Halia
- * @description:
- * @author: gavinliu
- * @create: 2019-04-22 15:25
+ * @author: Gavin Liu
+ *
+ * Created on 2019-04-22.
  **/
 object Halia {
 
@@ -63,7 +62,8 @@ object Halia {
         return dialogCreator(data, activity)
     }
 
-    private fun defaultDialogCreator(data: Any? = null, activity: Activity): Dialog? = MaterialDialog(activity).title(text = "Loading")
+    private fun defaultDialogCreator(data: Any? = null, activity: Activity): Dialog? =
+        MaterialDialog(activity).title(text = "Loading")
 
     private fun setTopActivity(activity: Activity?) {
         activity ?: return
