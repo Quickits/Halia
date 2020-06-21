@@ -1,3 +1,5 @@
+import cn.quickits.tools.make.Config
+
 dependencies {
     api Config.deps.androidx.appcompat.dep
     api Config.deps.androidx.core_ktx.dep

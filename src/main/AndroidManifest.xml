@@ -5,7 +5,7 @@
 
         <provider
             android:name=".HaliaInitProvider"
-            android:authorities="cn.quickits.halia"
+            android:authorities="${applicationId}.halia"
             android:exported="false" />
 
     </application>
